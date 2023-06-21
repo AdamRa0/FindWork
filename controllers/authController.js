@@ -3,60 +3,42 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-exports.signUp = async function (req, res, next) {
-  const { email, password, username } = req.body;
-
-  if (!email || !password || username) {
-    res.status(400).json({
-      status: "fail",
-      message: "Please provide email, password and username",
-    });
-  }
-
+exports.signUp = async function ({ email, password, username }) {
+  /**
+   * Saves a new user to database.
+   * Returns true if user saved successfully. False if otherwise.
+   * 
+   * Arguments
+   * ---------
+   * email: User's email address
+   * password: User's password
+   * username: User's desired username
+  */
   const user = await userModel.create({
     emailAddress: email,
     password: password,
     username: username,
   });
 
-  if (user === null) {
-    res.status(500).json({
-      status: "fail",
-      message: "Failed to sign up user. Please try again.",
-    });
-  }
-
-  res.status(201).json({
-    status: "success",
-    user,
-  });
+  return user !== null;
 };
 
-exports.signIn = async function (req, res, next) {
-  const { email, password } = req.body;
+exports.signIn = async function ({ email, userPassword }) {
+  /**
+   * Signs in a registered user.
+   * Returns true after a successful signin. False if otherwise.
+   *
+   * Arguments
+   * ---------
+   * email: Registered user email
+   * password: Registered user password
+   */
 
-  if (!email || !password) {
-    res.status(400).json({
-      status: "fail",
-      message: "Please provide email and password",
-    });
-  }
-
-  const { userPassword } = await userModel
-    .findOne({ email: email })
+  const user = await userModel
+    .findOne({ emailAddress: email })
     .select("+password");
 
-  const match = userModel.comparePassword(password, userPassword);
+  const match = user.comparePassword(userPassword, user.password);
 
-  if (!match) {
-    res.status(401).json({
-      status: "fail",
-      message: "Wrong username or password",
-    });
-  }
-
-  res.status(200).json({
-    status: "success",
-    message: "Signin successful",
-  });
+  return match;
 };

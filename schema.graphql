@@ -1,0 +1,22 @@
+type Query {
+  fetchUsers: [User]
+  fetchUser(id: String!): User
+}
+
+type User {
+  _id: ID!
+  username: String!
+  profilePicture: String
+  emailAddress: String!
+  experience: String
+  education: String
+  payRate: String
+  availability: String
+  role: String
+  rating: Int
+}
+
+type Mutation {
+  signupUser( email: String!, password: String!, username: String! ): Boolean!
+  signinUser( email: String!, password: String! ): Boolean!
+}
