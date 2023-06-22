@@ -41,9 +41,9 @@ type Mutation {
   ): Job!
   updateJob(
     id: ID!
-    description: String
-    experience: String
-    availability: String
-    languages: [String]
+    description: String!
+    experience: String!
+    availability: String!
+    languages: [String]!
   ): Job!
 }

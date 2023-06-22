@@ -31,3 +31,28 @@ exports.fetchJobController = async function ({ id }) {
 
   return job;
 };
+
+exports.updateJobContoller = async function ({
+  id,
+  description,
+  experience,
+  availability,
+  languages,
+}) {
+  const preferencesObject = {
+    availability: availability,
+    experience: experience,
+    languages: languages,
+  };
+
+  const updatedJob = await jobModel.findOneAndUpdate(
+    { _id: id },
+    {
+      description: description,
+      preferences: preferencesObject,
+    },
+    { new: true }
+  );
+
+  return updatedJob;
+};

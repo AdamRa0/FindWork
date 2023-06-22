@@ -1,4 +1,7 @@
-const { createJobController } = require("../controllers/jobController");
+const {
+  createJobController,
+  updateJobContoller,
+} = require("../controllers/jobController");
 
 exports.createJob = function (_, args) {
   const { description, experience, availability, languages } = args;
@@ -7,6 +10,18 @@ exports.createJob = function (_, args) {
     description: description,
     experience: experience,
     availability: availability,
-    languages: languages
+    languages: languages,
+  });
+};
+
+exports.updateJob = function (_, args) {
+  const { id, description, experience, availability, languages } = args;
+
+  return updateJobContoller({
+    id: id,
+    description: description,
+    experience: experience,
+    availability: availability,
+    languages: languages,
   });
 };
