@@ -55,11 +55,14 @@ async function setupAndStartSServer() {
 
 setupAndStartSServer();
 
+
 // TODO: Uncomment after project completion
 // process.on("unhandledRejection", async function () {
-//   console.log("Unhandled rejection. Server shutting down...");
-//   await server.close();
-//   httpServer.close(function () {
-//     process.exit(1);
-//   });
-// });
+  //   console.log("Unhandled rejection. Server shutting down...");
+  //   await server.close();
+  //   httpServer.close(function () {
+    //     process.exit(1);
+    //   });
+    // });
+    
+module.exports = httpServer; 
