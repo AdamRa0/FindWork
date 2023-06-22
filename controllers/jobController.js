@@ -6,7 +6,6 @@ exports.createJobController = async function ({
   availability,
   languages,
 }) {
-  console.log(languages);
   const preferencesObject = {
     availability: availability,
     experience: experience,
@@ -25,4 +24,10 @@ exports.fetchJobsController = async function () {
   const jobs = await jobModel.find();
 
   return jobs;
+};
+
+exports.fetchJobController = async function ({ id }) {
+  const job = await jobModel.findOne({ _id: id });
+
+  return job;
 };

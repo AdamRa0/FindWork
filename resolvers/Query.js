@@ -1,5 +1,6 @@
-const { fetchJobs } = require("../queries/jobQueries");
+const { fetchJobs, fetchJob } = require("../queries/jobQueries");
 
 module.exports = {
   fetchJobs,
+  fetchJob,
 };
