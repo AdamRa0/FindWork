@@ -6,6 +6,17 @@ exports.createJobController = async function ({
   availability,
   languages,
 }) {
+  /**
+   * Creates and returns the newly created job
+   *
+   * Arguments
+   * ---------
+   * description: Brief overview of required job
+   * experience: Desired level of experience anyone interested should have
+   * availability: How many hours a week anyone interested is available
+   * languages: Desired languages anyone interested should be able to speak
+   */
+
   const preferencesObject = {
     availability: availability,
     experience: experience,
@@ -21,18 +32,41 @@ exports.createJobController = async function ({
 };
 
 exports.fetchJobsController = async function () {
+  /**
+   * Returns list of all jobs
+   */
+
   const jobs = await jobModel.find();
 
   return jobs;
 };
 
 exports.fetchJobController = async function ({ id }) {
+  /**
+   * Returns a job with the id passed in argument
+   *
+   * Arguments
+   * ---------
+   * id: ID of desired job
+   */
+
   const job = await jobModel.findOne({ _id: id });
 
   return job;
 };
 
 exports.updateJobContoller = async function ({
+  /**
+   * Updates and returns the newly updated job
+   *
+   * Arguments
+   * ---------
+   * description: Brief overview of required job
+   * experience: Desired level of experience anyone interested should have
+   * availability: How many hours a week anyone interested is available
+   * languages: Desired languages anyone interested should be able to speak
+   */
+
   id,
   description,
   experience,
@@ -58,6 +92,15 @@ exports.updateJobContoller = async function ({
 };
 
 exports.deleteJobController = async function ({ id }) {
+  /**
+   * Deletes a job with the id passed in argument
+   * Returns a message or error depending if job is deleted successfully
+   *
+   * Arguments
+   * ---------
+   * id: ID of desired job
+   */
+
   const deleted = await jobModel.findOneAndDelete({ _id: id });
 
   return deleted ? "Job was successfully deleted" : "Could not delete job";
