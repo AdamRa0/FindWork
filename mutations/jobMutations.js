@@ -1,6 +1,7 @@
 const {
   createJobController,
   updateJobContoller,
+  deleteJobController,
 } = require("../controllers/jobController");
 
 exports.createJob = function (_, args) {
@@ -25,3 +26,9 @@ exports.updateJob = function (_, args) {
     languages: languages,
   });
 };
+
+exports.deleteJob = function (_, args) {
+  const { id } = args;
+
+  return deleteJobController({ id: id });
+}

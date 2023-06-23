@@ -46,4 +46,5 @@ type Mutation {
     availability: String!
     languages: [String]!
   ): Job!
+  deleteJob(id: ID!): String!
 }

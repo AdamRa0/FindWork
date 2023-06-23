@@ -56,3 +56,9 @@ exports.updateJobContoller = async function ({
 
   return updatedJob;
 };
+
+exports.deleteJobController = async function ({ id }) {
+  const deleted = await jobModel.findOneAndDelete({ _id: id });
+
+  return deleted ? "Job was successfully deleted" : "Could not delete job";
+};
