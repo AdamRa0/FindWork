@@ -8,6 +8,17 @@ async function preferences(parent, _) {
   return preferences;
 }
 
+async function jobPoster(parent, _) {
+  const jobID = parent.id;
+
+  const { jobPoster } = await jobModel.findById(jobID).populate({
+    path: "jobPoster",
+  });
+
+  return jobPoster;
+}
+
 module.exports = {
   preferences,
+  jobPoster,
 };

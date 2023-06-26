@@ -26,6 +26,10 @@ const jobSchema = new mongoose.Schema({
       ],
     },
   },
+  jobPoster: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 const jobModel = mongoose.model("Job", jobSchema);

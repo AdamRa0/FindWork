@@ -3,6 +3,7 @@ const app = require("./app");
 const Mutation = require("./resolvers/Mutation");
 const Job = require("./resolvers/Job");
 const Query = require("./queries/jobQueries");
+const User = require("./resolvers/User");
 
 // Dependency imports
 const { ApolloServer } = require("@apollo/server");
@@ -34,6 +35,7 @@ const resolvers = {
   Query,
   Mutation,
   Job,
+  User,
 };
 
 const port = process.env.PORT || 5000;

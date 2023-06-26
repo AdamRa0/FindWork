@@ -3,22 +3,35 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-exports.signUp = async function ({ email, password, username }) {
+exports.signUp = async function ({ email, password, username, role }) {
   /**
    * Saves a new user to database.
    * Returns true if user saved successfully. False if otherwise.
-   * 
+   *
    * Arguments
    * ---------
    * email: User's email address
    * password: User's password
    * username: User's desired username
-  */
-  const user = await userModel.create({
+   * role: User's role if not worker
+   */
+
+  let userObj = {};
+
+  const defaultObj = {
     emailAddress: email,
     password: password,
     username: username,
-  });
+  };
+
+  if (role) {
+    defaultObj.role = role;
+    userObj = Object.assign({}, defaultObj);
+  } else {
+    userObj = Object.assign({}, defaultObj);
+  }
+
+  const user = await userModel.create(userObj);
 
   return user !== null;
 };

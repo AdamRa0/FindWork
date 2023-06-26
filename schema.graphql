@@ -16,12 +16,14 @@ type User {
   availability: String
   role: String
   rating: Int
+  jobs: [Job]
 }
 
 type Job {
   _id: ID!
   description: String!
   preferences: Preference!
+  jobPoster: User!
 }
 
 type Preference {
@@ -31,13 +33,19 @@ type Preference {
 }
 
 type Mutation {
-  signupUser(email: String!, password: String!, username: String!): Boolean!
+  signupUser(
+    email: String!
+    password: String!
+    username: String!
+    role: String
+  ): Boolean!
   signinUser(email: String!, password: String!): Boolean!
   createJob(
     description: String!
     experience: String!
     availability: String!
     languages: [String!]!
+    jobPoster: ID!
   ): Job!
   updateJob(
     id: ID!

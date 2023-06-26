@@ -1,10 +1,12 @@
 const jobModel = require("../models/jobModel");
+const userModel = require("../models/userModel");
 
 exports.createJobController = async function ({
   description,
   experience,
   availability,
   languages,
+  jobPoster,
 }) {
   /**
    * Creates and returns the newly created job
@@ -15,6 +17,7 @@ exports.createJobController = async function ({
    * experience: Desired level of experience anyone interested should have
    * availability: How many hours a week anyone interested is available
    * languages: Desired languages anyone interested should be able to speak
+   * jobPoster: ID of jobPoster
    */
 
   const preferencesObject = {
@@ -26,7 +29,19 @@ exports.createJobController = async function ({
   const job = await jobModel.create({
     description: description,
     preferences: preferencesObject,
+    jobPoster: jobPoster,
   });
+
+  const { jobs } = await userModel.findById(jobPoster);
+
+  jobs.push(job._id);
+
+  await userModel.updateOne(
+    {
+      _id: jobPoster,
+    },
+    { jobs: jobs }
+  );
 
   return job;
 };
