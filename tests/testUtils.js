@@ -1,11 +1,9 @@
-// Top level imports
-const app = require("./app");
-const Mutation = require("./resolvers/Mutation");
-const Job = require("./resolvers/Job");
-const Query = require("./queries/jobQueries");
-const User = require("./resolvers/User");
+const app = require("../app");
+const Mutation = require("../resolvers/Mutation");
+const Job = require("../resolvers/Job");
+const Query = require("../queries/jobQueries");
+const User = require("../resolvers/User");
 
-// Dependency imports
 const { ApolloServer } = require("@apollo/server");
 const {
   ApolloServerPluginDrainHttpServer,
@@ -19,15 +17,9 @@ const path = require("path");
 
 dotenv.config();
 
-// TODO: Uncomment after project completion
-// process.on("uncaughtException", function () {
-//   console.log("Unhandled exception. Server shutting down...");
-//   process.exit(1);
-// });
-
 mongoose.set("strictQuery", false);
 
-mongoose.connect(process.env.DATABASE_URL).then(function (_) {
+mongoose.connect(process.env.TEST_DATABASE_URL).then(function (_) {
   console.log("Successfully connected to database");
 });
 
@@ -38,18 +30,18 @@ const resolvers = {
   User,
 };
 
-const port = process.env.PORT || 5000;
-
+const port = process.env.PORT || 2000;
 const httpServer = http.createServer(app);
 
 const server = new ApolloServer({
-  typeDefs: fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8"),
+  typeDefs: fs.readFileSync(path.join(process.cwd(), "schema.graphql"), "utf-8"),
   resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   status400ForVariableCoercionErrors: true,
 });
 
-async function setupAndStartSServer() {
+
+async function setupAndStartTestServer() {
   await server.start();
 
   app.use("/server", expressMiddleware(server));
@@ -59,13 +51,16 @@ async function setupAndStartSServer() {
   console.log(`Server starting at port: ${port}`);
 }
 
-setupAndStartSServer();
+function queryBuilder({ queryString }) {
+  const query = {
+    query: queryString,
+  };
 
-// TODO: Uncomment after project completion
-// process.on("unhandledRejection", async function () {
-//   console.log("Unhandled rejection. Server shutting down...");
-//   await server.close();
-//   httpServer.close(function () {
-//     process.exit(1);
-//   });
-// });
+  return query;
+}
+
+module.exports = {
+  setupAndStartTestServer,
+  httpServer,
+  queryBuilder,
+};
