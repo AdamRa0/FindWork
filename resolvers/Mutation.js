@@ -1,9 +1,15 @@
+const { signupUser, signinUser } = require("../mutations/authMutations");
+
 const {
-  signupUser,
-  signinUser,
-} = require("../mutations/authMutations");
+  createJob,
+  updateJob,
+  deleteJob,
+} = require("../mutations/jobMutations");
 
 module.exports = {
   signupUser,
   signinUser,
+  createJob,
+  updateJob,
+  deleteJob,
 };

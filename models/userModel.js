@@ -34,12 +34,21 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  jobs: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Job",
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  this.password = await bcrypt.hash(this.password, parseInt(process.env.SALT_ROUNDS));
+  this.password = await bcrypt.hash(
+    this.password,
+    parseInt(process.env.SALT_ROUNDS)
+  );
 
   next();
 });

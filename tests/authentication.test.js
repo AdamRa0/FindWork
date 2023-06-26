@@ -4,8 +4,8 @@ const request = require("supertest");
 const httpServer = require("../server");
 
 const newlySignedUpUser = {
-  emailAddress: "testuser2@example.com",
-  username: "testuser2",
+  emailAddress: "testuser_2@example.com",
+  username: "testuser_2",
   password: "password1234",
 };
 

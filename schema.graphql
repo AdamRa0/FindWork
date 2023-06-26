@@ -1,6 +1,8 @@
 type Query {
   fetchUsers: [User]
-  fetchUser(id: String!): User
+  fetchUser(id: ID!): User
+  fetchJobs: [Job]
+  fetchJob(id: ID!): Job
 }
 
 type User {
@@ -14,9 +16,43 @@ type User {
   availability: String
   role: String
   rating: Int
+  jobs: [Job]
+}
+
+type Job {
+  _id: ID!
+  description: String!
+  preferences: Preference!
+  jobPoster: User!
+}
+
+type Preference {
+  experience: String!
+  languages: [String!]!
+  availability: String!
 }
 
 type Mutation {
-  signupUser( email: String!, password: String!, username: String! ): Boolean!
-  signinUser( email: String!, password: String! ): Boolean!
+  signupUser(
+    email: String!
+    password: String!
+    username: String!
+    role: String
+  ): Boolean!
+  signinUser(email: String!, password: String!): Boolean!
+  createJob(
+    description: String!
+    experience: String!
+    availability: String!
+    languages: [String!]!
+    jobPoster: ID!
+  ): Job!
+  updateJob(
+    id: ID!
+    description: String!
+    experience: String!
+    availability: String!
+    languages: [String]!
+  ): Job!
+  deleteJob(id: ID!): String!
 }

@@ -1,6 +1,9 @@
 // Top level imports
 const app = require("./app");
 const Mutation = require("./resolvers/Mutation");
+const Job = require("./resolvers/Job");
+const Query = require("./queries/jobQueries");
+const User = require("./resolvers/User");
 
 // Dependency imports
 const { ApolloServer } = require("@apollo/server");
@@ -29,7 +32,10 @@ mongoose.connect(process.env.DATABASE_URL).then(function (_) {
 });
 
 const resolvers = {
-  Mutation
+  Query,
+  Mutation,
+  Job,
+  User,
 };
 
 const port = process.env.PORT || 5000;
@@ -55,14 +61,13 @@ async function setupAndStartSServer() {
 
 setupAndStartSServer();
 
-
 // TODO: Uncomment after project completion
 // process.on("unhandledRejection", async function () {
-  //   console.log("Unhandled rejection. Server shutting down...");
-  //   await server.close();
-  //   httpServer.close(function () {
-    //     process.exit(1);
-    //   });
-    // });
-    
-module.exports = httpServer; 
+//   console.log("Unhandled rejection. Server shutting down...");
+//   await server.close();
+//   httpServer.close(function () {
+//     process.exit(1);
+//   });
+// });
+
+module.exports = httpServer;
