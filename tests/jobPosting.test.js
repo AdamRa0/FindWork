@@ -1,5 +1,9 @@
 const request = require("supertest");
-const httpServer = require("../server");
+const {
+  setupAndStartTestServer,
+  httpServer,
+  queryBuilder,
+} = require("./testUtils");
 const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
 const jobModel = require("../models/jobModel");
@@ -13,9 +17,20 @@ const testJob = {
   },
 };
 
-const registeredTestUser = "testUser2";
+const testUser = {
+  username: "testUser",
+  emailAddress: "testUser@example.com",
+  password: "testuser1234",
+  role: "Employer",
+};
+
+beforeAll(async () => {
+  setupAndStartTestServer();
+  await userModel.create(testUser);
+}, 10000);
 
 afterAll(async () => {
+  await userModel.deleteOne({ username: testUser.username });
   await mongoose.connection.close();
   await httpServer.close();
 });
@@ -23,26 +38,28 @@ afterAll(async () => {
 describe("Job unit tests", () => {
   test("test create job mutation", async () => {
     const jobPoster = await userModel.findOne({
-      username: registeredTestUser,
+      username: testUser.username,
     });
 
-    const mutation = {
-      query: `mutation {
-            createJob(description: "${testJob.description}", experience: "${testJob.preferences.experience}", availability: "${testJob.preferences.availability}", languages: "${testJob.preferences.languages}", jobPoster: "${jobPoster._id}") {
-                description
-                jobPoster {
-                    username
-                }
+    const mutationQuery = queryBuilder({
+      queryString: `mutation {
+        createJob(description: "${testJob.description}", experience: "${testJob.preferences.experience}", availability: "${testJob.preferences.availability}", languages: "${testJob.preferences.languages}", jobPoster: "${jobPoster._id}") {
+            description
+            jobPoster {
+                username
             }
-        }`,
-    };
+        }
+    }`,
+    });
 
-    const response = await request(httpServer).post("/server").send(mutation);
+    const response = await request(httpServer)
+      .post("/server")
+      .send(mutationQuery);
 
     expect(response.errors).toBeUndefined();
     expect(response.body.data?.createJob.description).toBe(testJob.description);
     expect(response.body.data?.createJob.jobPoster.username).toBe(
-      registeredTestUser
+      testUser.username
     );
   }, 10000);
 
@@ -51,8 +68,8 @@ describe("Job unit tests", () => {
       description: testJob.description,
     });
 
-    const mutation = {
-      query: `mutation {
+    const mutationQuery = queryBuilder({
+      queryString: `mutation {
             updateJob(description: "Another ${testJob.description}", experience: "${testJob.preferences.experience}", availability: "${testJob.preferences.availability}", languages: "${testJob.preferences.languages}", id: "${jobToUpdate._id}") {
                 description
                 jobPoster {
@@ -60,25 +77,28 @@ describe("Job unit tests", () => {
                 }
             }
         }`,
-    };
+    });
 
-    const response = await request(httpServer).post("/server").send(mutation);
+    const response = await request(httpServer)
+      .post("/server")
+      .send(mutationQuery);
 
     expect(response.errors).toBeUndefined();
     expect(response.body.data?.updateJob.jobPoster.username).toBe(
-      registeredTestUser
+      testUser.username
     );
   }, 10000);
 
   test("test fetch jobs query", async () => {
-    const query = {
-      query: `query {
-        fetchJobs {
-          _id
-          description  
-        }
-      }`,
-    };
+
+    const query = queryBuilder({
+      queryString: `query {
+            fetchJobs {
+              _id
+              description  
+            }
+          }`,
+    });
 
     const response = await request(httpServer).post("/server").send(query);
 
@@ -91,13 +111,13 @@ describe("Job unit tests", () => {
       description: `Another ${testJob.description}`,
     });
 
-    const query = {
-      query: `query {
-        fetchJob(id: "${jobToUpdate._id}") {
-          description
-        }
-      }`,
-    };
+    const query = queryBuilder({
+      queryString: `query {
+            fetchJob(id: "${jobToUpdate._id}") {
+              description
+            }
+          }`,
+    });
 
     const response = await request(httpServer).post("/server").send(query);
 
@@ -112,13 +132,15 @@ describe("Job unit tests", () => {
       description: `Another ${testJob.description}`,
     });
 
-    const mutation = {
-      query: `mutation {
+    const mutationQuery = queryBuilder({
+      queryString: `mutation {
             deleteJob(id: "${jobToDelete._id}")
         }`,
-    };
+    });
 
-    const response = await request(httpServer).post("/server").send(mutation);
+    const response = await request(httpServer)
+      .post("/server")
+      .send(mutationQuery);
 
     expect(response.errors).toBeUndefined();
     expect(response.body.data?.deleteJob).toBe("Job was successfully deleted");
