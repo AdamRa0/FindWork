@@ -3,7 +3,7 @@ const {
   fetchJobController,
 } = require("../controllers/jobController");
 
-exports.fetchJobs = function (_, _) {
+exports.fetchJobs = function (parent, _) {
   return fetchJobsController();
 };
 

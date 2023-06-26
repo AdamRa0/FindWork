@@ -118,5 +118,9 @@ exports.deleteJobController = async function ({ id }) {
 
   const deleted = await jobModel.findOneAndDelete({ _id: id });
 
+  const deletedJobPoster = deleted.jobPoster;
+
+  await userModel.updateOne({ _id: deletedJobPoster }, { $pull: { jobs: deleted._id }});
+
   return deleted ? "Job was successfully deleted" : "Could not delete job";
 };
