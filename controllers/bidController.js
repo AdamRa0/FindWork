@@ -35,7 +35,7 @@ exports.fetchBidsController = async function () {
 
 exports.fetchBidController = async function ({ bidId }) {
   // Returns a specific bid
-  const bid = await bidModel.find({ _id: bidId });
+  const bid = await bidModel.findById(bidId);
 
   return bid;
 };
