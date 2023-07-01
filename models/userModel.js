@@ -40,6 +40,12 @@ const userSchema = new mongoose.Schema({
       ref: "Job",
     },
   ],
+  bids: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Job",
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {

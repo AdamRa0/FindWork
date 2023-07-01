@@ -30,6 +30,7 @@ const jobSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "User",
   },
+  bids: [{ type: mongoose.Types.ObjectId, ref: "Bid" }],
 });
 
 const jobModel = mongoose.model("Job", jobSchema);
