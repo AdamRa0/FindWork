@@ -32,7 +32,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await userModel.deleteOne({ username: testUser.username });
   await mongoose.connection.close();
-  await httpServer.close();
+  httpServer.close();
 });
 
 describe("Job unit tests", () => {
@@ -90,7 +90,6 @@ describe("Job unit tests", () => {
   }, 10000);
 
   test("test fetch jobs query", async () => {
-
     const query = queryBuilder({
       queryString: `query {
             fetchJobs {
