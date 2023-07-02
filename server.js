@@ -1,8 +1,9 @@
 // Top level imports
 const app = require("./app");
+const Bid = require("./resolvers/Bid");
 const Mutation = require("./resolvers/Mutation");
 const Job = require("./resolvers/Job");
-const Query = require("./queries/jobQueries");
+const Query = require("./resolvers/Query");
 const User = require("./resolvers/User");
 
 // Dependency imports
@@ -34,6 +35,7 @@ mongoose.connect(process.env.DATABASE_URL).then(function (_) {
 const resolvers = {
   Query,
   Mutation,
+  Bid,
   Job,
   User,
 };

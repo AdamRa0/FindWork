@@ -11,6 +11,15 @@ async function jobs(parent, _) {
   return userJobs;
 }
 
+async function bids(parent, _) {
+  const userID = parent.id;
+
+  const userBids = await userModel.findById(userID).populate({ path: "bids" });
+
+  return userBids;
+}
+
 module.exports = {
   jobs,
+  bids,
 };

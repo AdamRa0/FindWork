@@ -3,6 +3,8 @@ type Query {
   fetchUser(id: ID!): User
   fetchJobs: [Job]
   fetchJob(id: ID!): Job
+  fetchBids: [Bid]
+  fetchBid(id: ID!): Bid
 }
 
 type User {
@@ -17,6 +19,7 @@ type User {
   role: String
   rating: Int
   jobs: [Job]
+  bids: [Bid]
 }
 
 type Job {
@@ -24,12 +27,20 @@ type Job {
   description: String!
   preferences: Preference!
   jobPoster: User!
+  bids: [Bid]
 }
 
 type Preference {
   experience: String!
   languages: [String!]!
   availability: String!
+}
+
+type Bid {
+  _id: ID!
+  proposal: String!
+  bidder: User!
+  auctionedJob: Job!
 }
 
 type Mutation {
@@ -55,4 +66,7 @@ type Mutation {
     languages: [String]!
   ): Job!
   deleteJob(id: ID!): String!
+  createBid(proposal: String!, bidder_id: ID!, job_id: ID!): Bid!
+  updateBid(id: ID!, proposal: String!): Bid!
+  deleteBid(id: ID!): String!
 }
