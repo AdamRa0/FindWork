@@ -3,6 +3,8 @@ const Mutation = require("../resolvers/Mutation");
 const Job = require("../resolvers/Job");
 const Query = require("../queries/jobQueries");
 const User = require("../resolvers/User");
+const Bid = require("../resolvers/Bid");
+const Review = require("../resolvers/Review");
 
 const { ApolloServer } = require("@apollo/server");
 const {
@@ -28,18 +30,22 @@ const resolvers = {
   Mutation,
   Job,
   User,
+  Bid,
+  Review,
 };
 
 const port = process.env.PORT || 2000;
 const httpServer = http.createServer(app);
 
 const server = new ApolloServer({
-  typeDefs: fs.readFileSync(path.join(process.cwd(), "schema.graphql"), "utf-8"),
+  typeDefs: fs.readFileSync(
+    path.join(process.cwd(), "schema.graphql"),
+    "utf-8"
+  ),
   resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   status400ForVariableCoercionErrors: true,
 });
-
 
 async function setupAndStartTestServer() {
   await server.start();
