@@ -1,6 +1,6 @@
-const bidModel = require("../models/bidModel");
-const jobModel = require("../models/jobModel");
-const userModel = require("../models/userModel");
+const BidModel = require("../models/bidModel");
+const JobModel = require("../models/jobModel");
+const UserModel = require("../models/userModel");
 
 exports.createBidController = async function ({ proposal, id, jobId }) {
   /**
@@ -13,29 +13,29 @@ exports.createBidController = async function ({ proposal, id, jobId }) {
    * jobId: id of job being bidded
    */
 
-  const bid = await bidModel.create({
+  const bid = await BidModel.create({
     proposal: proposal,
     bidder: id,
     auctionedJob: jobId,
   });
 
-  await userModel.updateOne({ _id: id }, { $push: { bids: bid.id } });
+  await UserModel.updateOne({ _id: id }, { $push: { bids: bid.id } });
 
-  await jobModel.updateOne({ _id: jobId }, { $push: { bids: bid.id } });
+  await JobModel.updateOne({ _id: jobId }, { $push: { bids: bid.id } });
 
   return bid;
 };
 
 exports.fetchBidsController = async function () {
   // Returns all bids posted
-  const bids = await bidModel.find();
+  const bids = await BidModel.find();
 
   return bids;
 };
 
 exports.fetchBidController = async function ({ bidId }) {
   // Returns a specific bid
-  const bid = await bidModel.findById(bidId);
+  const bid = await BidModel.findById(bidId);
 
   return bid;
 };
@@ -50,7 +50,7 @@ exports.updateBidController = async function ({ id, proposal }) {
    * proposal: updated proposal
    */
 
-  const updatedBid = await bidModel.findOneAndUpdate(
+  const updatedBid = await BidModel.findOneAndUpdate(
     { _id: id },
     { proposal: proposal },
     { new: true }
@@ -68,7 +68,7 @@ exports.deleteBidController = async function ({ id }) {
    * Id of bid to be deleted
    */
 
-  const deletedBid = await bidModel.findOneAndDelete({ _id: id });
+  const deletedBid = await BidModel.findOneAndDelete({ _id: id });
 
   const bidderId = deletedBid.bidder;
   const jobId = deletedBid.auctionedJob;
@@ -77,15 +77,12 @@ exports.deleteBidController = async function ({ id }) {
     return "Failed to delete bid. Try again";
   }
 
-  await userModel.updateOne(
+  await UserModel.updateOne(
     { _id: bidderId },
     { $pull: { bids: deletedBid.id } }
   );
 
-  await jobModel.updateOne(
-    { _id: jobId },
-    { $pull: { bids: deletedBid.id } }
-  );
+  await JobModel.updateOne({ _id: jobId }, { $pull: { bids: deletedBid.id } });
 
   return "Bid successfully deleted";
 };

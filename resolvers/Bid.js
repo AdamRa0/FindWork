@@ -1,17 +1,17 @@
-const bidModel = require("../models/bidModel");
+const BidModel = require("../models/bidModel");
 
 async function bidder(parent, _) {
-  const { bidder } = await bidModel
-    .findById(parent.id)
-    .populate({ path: "bidder" });
+  const { bidder } = await BidModel.findById(parent.id).populate({
+    path: "bidder",
+  });
 
   return bidder;
 }
 
 async function auctionedJob(parent, _) {
-  const { auctionedJob } = await bidModel
-    .findById(parent.id)
-    .populate({ path: "auctionedJob" });
+  const { auctionedJob } = await BidModel.findById(parent.id).populate({
+    path: "auctionedJob",
+  });
 
   return auctionedJob;
 }

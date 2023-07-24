@@ -1,10 +1,9 @@
-const mongoose = require("mongoose");
-const userModel = require("../models/userModel");
+const UserModel = require("../models/userModel");
 
 async function jobs(parent, _) {
   const userID = parent.id;
 
-  const userJobs = await userModel.findById(userID).populate({
+  const userJobs = await UserModel.findById(userID).populate({
     path: "jobs",
   });
 
@@ -14,12 +13,23 @@ async function jobs(parent, _) {
 async function bids(parent, _) {
   const userID = parent.id;
 
-  const userBids = await userModel.findById(userID).populate({ path: "bids" });
+  const userBids = await UserModel.findById(userID).populate({ path: "bids" });
 
   return userBids;
+}
+
+async function reviews(parent, _) {
+  const userID = parent.id;
+
+  const userReviews = await UserModel.findById(userID).populate({
+    path: "reviews",
+  });
+
+  return userReviews;
 }
 
 module.exports = {
   jobs,
   bids,
+  reviews,
 };

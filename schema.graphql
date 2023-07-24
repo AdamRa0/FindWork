@@ -5,6 +5,8 @@ type Query {
   fetchJob(id: ID!): Job
   fetchBids: [Bid]
   fetchBid(id: ID!): Bid
+  fetchReviews: [Review]
+  fetchReview(id: ID!): Review
 }
 
 type User {
@@ -20,6 +22,15 @@ type User {
   rating: Int
   jobs: [Job]
   bids: [Bid]
+  reviews: [Review]
+}
+
+type Review {
+  _id: ID!
+  rating: Int!
+  reviewText: String!
+  author: User
+  reviewee: User
 }
 
 type Job {
@@ -69,4 +80,12 @@ type Mutation {
   createBid(proposal: String!, bidder_id: ID!, job_id: ID!): Bid!
   updateBid(id: ID!, proposal: String!): Bid!
   deleteBid(id: ID!): String!
+  createReview(
+    rating: Int!
+    reviewText: String!
+    author: ID!
+    reviewee: ID!
+  ): Review!
+  updateReview(id: ID!, rating: Int, reviewText: String): Review
+  deleteReview(id: ID!): String!
 }

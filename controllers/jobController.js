@@ -1,5 +1,5 @@
-const jobModel = require("../models/jobModel");
-const userModel = require("../models/userModel");
+const JobModel = require("../models/jobModel");
+const UserModel = require("../models/userModel");
 
 exports.createJobController = async function ({
   description,
@@ -26,17 +26,17 @@ exports.createJobController = async function ({
     languages: languages,
   };
 
-  const job = await jobModel.create({
+  const job = await JobModel.create({
     description: description,
     preferences: preferencesObject,
     jobPoster: jobPoster,
   });
 
-  const { jobs } = await userModel.findById(jobPoster);
+  const { jobs } = await UserModel.findById(jobPoster);
 
   jobs.push(job._id);
 
-  await userModel.updateOne(
+  await UserModel.updateOne(
     {
       _id: jobPoster,
     },
@@ -51,7 +51,7 @@ exports.fetchJobsController = async function () {
    * Returns list of all jobs
    */
 
-  const jobs = await jobModel.find();
+  const jobs = await JobModel.find();
 
   return jobs;
 };
@@ -65,7 +65,7 @@ exports.fetchJobController = async function ({ id }) {
    * id: ID of desired job
    */
 
-  const job = await jobModel.findOne({ _id: id });
+  const job = await JobModel.findOne({ _id: id });
 
   return job;
 };
@@ -94,7 +94,7 @@ exports.updateJobContoller = async function ({
     languages: languages,
   };
 
-  const updatedJob = await jobModel.findOneAndUpdate(
+  const updatedJob = await JobModel.findOneAndUpdate(
     { _id: id },
     {
       description: description,
@@ -116,11 +116,11 @@ exports.deleteJobController = async function ({ id }) {
    * id: ID of desired job
    */
 
-  const deleted = await jobModel.findOneAndDelete({ _id: id });
+  const deleted = await JobModel.findOneAndDelete({ _id: id });
 
   const deletedJobPoster = deleted.jobPoster;
 
-  await userModel.updateOne(
+  await UserModel.updateOne(
     { _id: deletedJobPoster },
     { $pull: { jobs: deleted._id } }
   );

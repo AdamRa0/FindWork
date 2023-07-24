@@ -12,6 +12,12 @@ const {
   deleteBid,
 } = require("../mutations/bidMutations");
 
+const {
+  createReview,
+  updateReview,
+  deleteReview,
+} = require("../mutations/reviewMutations");
+
 module.exports = {
   signupUser,
   signinUser,
@@ -21,4 +27,7 @@ module.exports = {
   createBid,
   updateBid,
   deleteBid,
+  createReview,
+  updateReview,
+  deleteReview,
 };

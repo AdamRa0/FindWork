@@ -33,6 +33,8 @@ const userSchema = new mongoose.Schema({
   rating: {
     type: Number,
     default: 0,
+    min: 0,
+    max: 5,
   },
   jobs: [
     {
@@ -44,6 +46,12 @@ const userSchema = new mongoose.Schema({
     {
       type: mongoose.Types.ObjectId,
       ref: "Job",
+    },
+  ],
+  reviews: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Review",
     },
   ],
 });

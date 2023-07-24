@@ -1,9 +1,9 @@
-const jobModel = require("../models/jobModel");
+const JobModel = require("../models/jobModel");
 
 async function preferences(parent, _) {
   const jobID = parent.id;
 
-  const { preferences } = await jobModel.findById(jobID);
+  const { preferences } = await JobModel.findById(jobID);
 
   return preferences;
 }
@@ -11,7 +11,7 @@ async function preferences(parent, _) {
 async function jobPoster(parent, _) {
   const jobID = parent.id;
 
-  const { jobPoster } = await jobModel.findById(jobID).populate({
+  const { jobPoster } = await JobModel.findById(jobID).populate({
     path: "jobPoster",
   });
 
@@ -21,7 +21,7 @@ async function jobPoster(parent, _) {
 async function bids(parent, _) {
   const jobID = parent.id;
 
-  const jobBids = await jobModel.findById(jobID).populate({ path: "bids" });
+  const jobBids = await JobModel.findById(jobID).populate({ path: "bids" });
 
   return jobBids;
 }

@@ -1,4 +1,4 @@
-const userModel = require("../models/userModel");
+const UserModel = require("../models/userModel");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -31,7 +31,7 @@ exports.signUp = async function ({ email, password, username, role }) {
     userObj = Object.assign({}, defaultObj);
   }
 
-  const user = await userModel.create(userObj);
+  const user = await UserModel.create(userObj);
 
   return user !== null;
 };
@@ -47,9 +47,9 @@ exports.signIn = async function ({ email, userPassword }) {
    * password: Registered user password
    */
 
-  const user = await userModel
-    .findOne({ emailAddress: email })
-    .select("+password");
+  const user = await UserModel.findOne({ emailAddress: email }).select(
+    "+password"
+  );
 
   const match = user.comparePassword(userPassword, user.password);
 
