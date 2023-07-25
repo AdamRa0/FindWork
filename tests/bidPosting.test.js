@@ -5,9 +5,9 @@ const {
   queryBuilder,
 } = require("./testUtils");
 const mongoose = require("mongoose");
-const userModel = require("../models/userModel");
-const jobModel = require("../models/jobModel");
-const bidModel = require("../models/bidModel");
+const UserModel = require("../models/userModel");
+const JobModel = require("../models/jobModel");
+const BidModel = require("../models/bidModel");
 
 const testUser = {
   username: "testworker",
@@ -30,23 +30,22 @@ const testBid = {
 
 beforeAll(async () => {
   setupAndStartTestServer();
-  await userModel.create(testUser);
-  await jobModel.create(testJob);
+  await UserModel.create(testUser);
+  await JobModel.create(testJob);
 }, 10000);
 
 afterAll(async () => {
-  await userModel.deleteOne({ username: testUser.username });
-  await jobModel.deleteOne({ description: testJob.description });
-  await bidModel.deleteMany({});
+  await UserModel.deleteOne({ username: testUser.username });
+  await JobModel.deleteOne({ description: testJob.description });
   await mongoose.connection.close();
   httpServer.close();
 }, 10000);
 
 describe("Bid unit tests", () => {
   test("test create bid mutation", async () => {
-    const bidPoster = await userModel.findOne({ username: testUser.username });
+    const bidPoster = await UserModel.findOne({ username: testUser.username });
 
-    const jobToBid = await jobModel.findOne({
+    const jobToBid = await JobModel.findOne({
       description: testJob.description,
     });
 
@@ -68,8 +67,6 @@ describe("Bid unit tests", () => {
       .post("/server")
       .send(mutationQuery);
 
-    console.log(response.body.errors);
-
     expect(response.body.data?.createBid.proposal).toBe(testBid.proposal);
     expect(response.body.data?.createBid.bidder.username).toBe(
       testUser.username
@@ -79,31 +76,72 @@ describe("Bid unit tests", () => {
     );
   }, 10000);
 
-  // test("test fetch bids query", async () => {
-  //   const mutationQuery = queryBuilder({
-  //     queryString: `query {
-  //       fetchBids {
-  //         proposal
-  //         bidder {
-  //           username
-  //         }
-  //         auctionedJob {
-  //           description
-  //         }
-  //       }
-  //     }`,
-  //   });
+  test("test fetch bids query", async () => {
+    const query = queryBuilder({
+      queryString: `query {
+        fetchBids {
+          proposal
+        }
+      }`,
+    });
 
-  //   const response = await request(httpServer)
-  //     .post("/server")
-  //     .send(mutationQuery);
+    const response = await request(httpServer).post("/server").send(query);
 
-  //   expect(response.body.data?.fetchBids[0].proposal).toBe(testBid.proposal);
-  //   expect(response.body.data?.fetchBids[0].bidder.username).toBe(
-  //     testUser.username
-  //   );
-  //   expect(response.body.data?.fetchBids[0].auctionedJob.description).toBe(
-  //     testJob.description
-  //   );
-  // }, 10000);
+    expect(response.body.data?.fetchBids.length).toBeGreaterThan(0);
+  }, 10000);
+
+  test("test fetch bid query", async () => {
+    const { _id } = await BidModel.findOne({ proposal: testBid.proposal });
+
+    const query = queryBuilder({
+      queryString: `query {
+        fetchBid(id: "${_id}") {
+          proposal
+        }
+      }`,
+    });
+
+    const response = await request(httpServer).post("/server").send(query);
+
+    expect(response.body.data?.fetchBid.proposal).toBe(testBid.proposal);
+  }, 10000);
+
+  test("test update bid mutation", async () => {
+    const { _id } = await BidModel.findOne({ proposal: testBid.proposal });
+
+    const mutationQuery = queryBuilder({
+      queryString: `mutation {
+        updateBid(proposal: "Updated test bid proposal.", id: "${_id}") {
+          proposal
+        }
+      }`,
+    });
+
+    const response = await request(httpServer)
+      .post("/server")
+      .send(mutationQuery);
+
+    expect(response.body.data?.updateBid.proposal).not.toBe(testBid.proposal);
+    expect(response.body.data?.updateBid.proposal).toBe(
+      "Updated test bid proposal."
+    );
+  }, 10000);
+
+  test("test update bid mutation", async () => {
+    const { _id } = await BidModel.findOne({
+      proposal: "Updated test bid proposal.",
+    });
+
+    const mutationQuery = queryBuilder({
+      queryString: `mutation {
+        deleteBid(id: "${_id}")
+      }`,
+    });
+
+    const response = await request(httpServer)
+      .post("/server")
+      .send(mutationQuery);
+
+    expect(response.body.data?.deleteBid).toBe("Bid successfully deleted");
+  }, 10000);
 });
