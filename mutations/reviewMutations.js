@@ -4,15 +4,15 @@ const {
   deleteReviewController,
 } = require("../controllers/reviewController");
 
-const { GraphQLError } = require("graphql");
+const { errorBuilder } = require("../utils/errorBuilder");
 
 function createReview(_, args, { credentials }) {
   if (credentials !== "Worker" || credentials !== "Employer") {
-    throw new GraphQLError("You are not authoraized to create a review", {
-      extensions: {
-        code: "FORBIDDEN",
-      },
+    const error = errorBuilder({
+      errorMessage: "You are not authorized to create a review",
+      errorCode: "FORBIDDEN",
     });
+    throw error;
   }
 
   return createReviewController({
@@ -25,11 +25,11 @@ function createReview(_, args, { credentials }) {
 
 function updateReview(_, args, { credentials }) {
   if (credentials !== "Worker" || credentials !== "Employer") {
-    throw new GraphQLError("You are not authoraized to create a review", {
-      extensions: {
-        code: "FORBIDDEN",
-      },
+    const error = errorBuilder({
+      errorMessage: "You are not authorized to update a review",
+      errorCode: "FORBIDDEN",
     });
+    throw error;
   }
 
   return updateReviewController({
@@ -45,11 +45,11 @@ function deleteReview(_, args, { credentials }) {
     credentials !== "Employer" ||
     credentials !== "Admin"
   ) {
-    throw new GraphQLError("You are not authoraized to create a review", {
-      extensions: {
-        code: "FORBIDDEN",
-      },
+    const error = errorBuilder({
+      errorMessage: "You are not delete to create a review",
+      errorCode: "FORBIDDEN",
     });
+    throw error;
   }
 
   return deleteReviewController({ reviewId: args.id });

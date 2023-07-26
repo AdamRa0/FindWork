@@ -4,18 +4,18 @@ const {
   deleteJobController,
 } = require("../controllers/jobController");
 
-const { GraphQLError } = require("graphql");
+const { errorBuilder } = require("../utils/errorBuilder");
 
 exports.createJob = function (_, args, { credentials }) {
   //TODO: If user acccessing this resolver isn't employee, return error
   const { description, experience, availability, languages, jobPoster } = args;
 
   if (credentials !== "Employer") {
-    throw new GraphQLError("You are not authorized to create a job", {
-      extensions: {
-        code: "FORBIDDEN",
-      },
+    const error = errorBuilder({
+      errorMessage: "You are not authorized to create a job",
+      errorCode: "FORBIDDEN",
     });
+    throw error;
   }
 
   return createJobController({
@@ -32,11 +32,11 @@ exports.updateJob = function (_, args, { credentials }) {
   const { id, description, experience, availability, languages } = args;
 
   if (credentials !== "Employer") {
-    throw new GraphQLError("You are not authorized to update a job", {
-      extensions: {
-        code: "FORBIDDEN",
-      },
+    const error = errorBuilder({
+      errorMessage: "You are not authorized to update a job",
+      errorCode: "FORBIDDEN",
     });
+    throw error;
   }
 
   return updateJobContoller({
@@ -53,11 +53,11 @@ exports.deleteJob = function (_, args) {
   const { id } = args;
 
   if (credentials !== "Employer" || credentials !== "Admin") {
-    throw new GraphQLError("You are not authorized to delete a job", {
-      extensions: {
-        code: "FORBIDDEN",
-      },
+    const error = errorBuilder({
+      errorMessage: "You are not delete to create a job",
+      errorCode: "FORBIDDEN",
     });
+    throw error;
   }
 
   return deleteJobController({ id: id });
