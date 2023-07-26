@@ -4,7 +4,17 @@ const {
   deleteReviewController,
 } = require("../controllers/reviewController");
 
-function createReview(_, args) {
+const { GraphQLError } = require("graphql");
+
+function createReview(_, args, { credentials }) {
+  if (credentials !== "Worker" || credentials !== "Employer") {
+    throw new GraphQLError("You are not authoraized to create a review", {
+      extensions: {
+        code: "FORBIDDEN",
+      },
+    });
+  }
+
   return createReviewController({
     rating: args.rating,
     reviewText: args.reviewText,
@@ -13,7 +23,15 @@ function createReview(_, args) {
   });
 }
 
-function updateReview(_, args) {
+function updateReview(_, args, { credentials }) {
+  if (credentials !== "Worker" || credentials !== "Employer") {
+    throw new GraphQLError("You are not authoraized to create a review", {
+      extensions: {
+        code: "FORBIDDEN",
+      },
+    });
+  }
+
   return updateReviewController({
     reviewId: args.id,
     updatedRating: args.rating,
@@ -21,7 +39,19 @@ function updateReview(_, args) {
   });
 }
 
-function deleteReview(_, args) {
+function deleteReview(_, args, { credentials }) {
+  if (
+    credentials !== "Worker" ||
+    credentials !== "Employer" ||
+    credentials !== "Admin"
+  ) {
+    throw new GraphQLError("You are not authoraized to create a review", {
+      extensions: {
+        code: "FORBIDDEN",
+      },
+    });
+  }
+
   return deleteReviewController({ reviewId: args.id });
 }
 
