@@ -18,14 +18,9 @@ const fs = require("fs");
 const http = require("http");
 const mongoose = require("mongoose");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 
 dotenv.config();
-
-// TODO: Uncomment after project completion
-// process.on("uncaughtException", function () {
-//   console.log("Unhandled exception. Server shutting down...");
-//   process.exit(1);
-// });
 
 mongoose.set("strictQuery", false);
 
@@ -56,7 +51,25 @@ const server = new ApolloServer({
 async function setupAndStartSServer() {
   await server.start();
 
-  app.use("/server", expressMiddleware(server));
+  app.use(
+    "/server",
+    (req, _, next) => {
+      try {
+        const { userRole } = jwt.verify(
+          req.cookies.credentials,
+          process.env.JWT_SECRET_KEY
+        );
+        req.role = userRole;
+      } catch (error) {
+        console.log(error);
+      }
+
+      return next();
+    },
+    expressMiddleware(server, {
+      context: ({ req, res }) => ({ res, credentials: req.role }),
+    })
+  );
 
   await new Promise((resolve) => httpServer.listen({ port: port }, resolve));
 
@@ -64,12 +77,3 @@ async function setupAndStartSServer() {
 }
 
 setupAndStartSServer();
-
-// TODO: Uncomment after project completion
-// process.on("unhandledRejection", async function () {
-//   console.log("Unhandled rejection. Server shutting down...");
-//   await server.close();
-//   httpServer.close(function () {
-//     process.exit(1);
-//   });
-// });

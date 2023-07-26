@@ -53,5 +53,5 @@ exports.signIn = async function ({ email, userPassword }) {
 
   const match = user.comparePassword(userPassword, user.password);
 
-  return match;
+  return { role: user.role, isMatch: match };
 };
