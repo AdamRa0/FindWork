@@ -6,10 +6,17 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-exports.signupUser = function (_, args, { res }) {
+exports.signupUser = async function (_, args, { res }) {
   const { email, password, username, role } = args;
 
-  const token = jwt.sign({ userRole: role }, process.env.JWT_SECRET_KEY, {
+  const { userRole, isRegistered } = await signUp({
+    email: email,
+    password: password,
+    username: username,
+    role: role,
+  });
+
+  const token = jwt.sign({ userRole: userRole }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRY_TIME,
   });
 
@@ -19,12 +26,7 @@ exports.signupUser = function (_, args, { res }) {
     maxAge: Date.now() + 24 * 60 * 60 * 1000,
   });
 
-  return signUp({
-    email: email,
-    password: password,
-    username: username,
-    role: role,
-  });
+  return isRegistered;
 };
 
 exports.signinUser = async function (_, args, { res }) {

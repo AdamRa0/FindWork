@@ -33,7 +33,7 @@ exports.signUp = async function ({ email, password, username, role }) {
 
   const user = await UserModel.create(userObj);
 
-  return user !== null;
+  return { userRole: user.role, isRegistered: user !== null };
 };
 
 exports.signIn = async function ({ email, userPassword }) {
