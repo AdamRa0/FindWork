@@ -52,7 +52,7 @@ exports.deleteJob = function (_, args) {
   //TODO: If user acccessing this resolver isn't employee, return error
   const { id } = args;
 
-  if (credentials !== "Employer") {
+  if (credentials !== "Employer" || credentials !== "Admin") {
     throw new GraphQLError("You are not authorized to delete a job", {
       extensions: {
         code: "FORBIDDEN",
