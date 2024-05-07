@@ -46,7 +46,7 @@ function deleteReview(_, args, { credentials }) {
     credentials !== "Admin"
   ) {
     const error = errorBuilder({
-      errorMessage: "You are not delete to create a review",
+      errorMessage: "You are not authorized to delete a review",
       errorCode: "FORBIDDEN",
     });
     throw error;

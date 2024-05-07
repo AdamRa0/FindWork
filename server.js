@@ -51,6 +51,16 @@ const server = new ApolloServer({
 async function setupAndStartSServer() {
   await server.start();
 
+  app.use("/", (_, res) => {
+    res
+      .json({
+        status: "OK",
+        message:
+          "This is a graphql api. Make your queries on the /server endpoint",
+      })
+      .status(200);
+  });
+
   app.use(
     "/server",
     (req, _, next) => {
