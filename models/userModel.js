@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Email address is a required field."],
   },
+  banned: {
+    type: Boolean,
+    default: false,
+  },
   experience: String,
   education: String,
   payRate: String,

@@ -24,7 +24,7 @@ exports.createBid = function (_, args, { credentials }) {
   });
 };
 
-exports.updateBid = function (_, args) {
+exports.updateBid = function (_, args, { credentials }) {
   const { id, proposal } = args;
 
   if (credentials !== "Worker") {
@@ -38,7 +38,7 @@ exports.updateBid = function (_, args) {
   return updateBidController({ id: id, proposal: proposal });
 };
 
-exports.deleteBid = function (_, args) {
+exports.deleteBid = function (_, args, { credentials }) {
   const { id } = args;
 
   if (credentials !== "Worker" || credentials !== "Admin") {

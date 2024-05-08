@@ -51,7 +51,7 @@ const server = new ApolloServer({
 async function setupAndStartSServer() {
   await server.start();
 
-  app.use("/", (_, res) => {
+  app.get("/", (_, res) => {
     res
       .json({
         status: "OK",
@@ -65,6 +65,11 @@ async function setupAndStartSServer() {
     "/server",
     (req, _, next) => {
       try {
+
+        if (!req.cookies.credentials) {
+          return next();
+        }
+
         const { userRole } = jwt.verify(
           req.cookies.credentials,
           process.env.JWT_SECRET_KEY

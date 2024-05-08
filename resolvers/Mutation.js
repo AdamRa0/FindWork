@@ -18,6 +18,10 @@ const {
   deleteReview,
 } = require("../mutations/reviewMutations");
 
+const {
+  banUser
+} = require("../mutations/userMutations");
+
 module.exports = {
   signupUser,
   signinUser,
@@ -30,4 +34,5 @@ module.exports = {
   createReview,
   updateReview,
   deleteReview,
+  banUser,
 };
