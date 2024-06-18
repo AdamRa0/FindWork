@@ -62,6 +62,7 @@ type Mutation {
     role: String
   ): Boolean!
   signinUser(email: String!, password: String!): Boolean!
+  banUser(userID: ID!): String!
   createJob(
     description: String!
     experience: String!

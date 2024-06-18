@@ -27,7 +27,14 @@ const testUser = {
 beforeAll(async () => {
   setupAndStartTestServer();
   await userModel.create(testUser);
-}, 10000);
+  const mutationQuery = queryBuilder({
+    queryString: `mutation { 
+    signupUser(email: "${testUser.emailAddress}", password: "${testUser.password}", username: "${testUser.username}" role: "${testUser.role}")
+  }`,
+  });
+
+  await request(httpServer).post("/server").send(mutationQuery);
+}, 20000);
 
 afterAll(async () => {
   await userModel.deleteOne({ username: testUser.username });
@@ -55,6 +62,8 @@ describe("Job unit tests", () => {
     const response = await request(httpServer)
       .post("/server")
       .send(mutationQuery);
+
+    console.log(response)
 
     expect(response.errors).toBeUndefined();
     expect(response.body.data?.createJob.description).toBe(testJob.description);

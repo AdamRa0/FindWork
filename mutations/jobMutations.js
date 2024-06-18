@@ -48,7 +48,7 @@ exports.updateJob = function (_, args, { credentials }) {
   });
 };
 
-exports.deleteJob = function (_, args) {
+exports.deleteJob = function (_, args, { credentials }) {
   //TODO: If user acccessing this resolver isn't employee, return error
   const { id } = args;
 
