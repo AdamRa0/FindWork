@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const path = require("path");
+const { Worker } = require("node:worker_threads");
 
 dotenv.config();
 
@@ -60,10 +62,40 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
+function hashPassword(password, saltRounds) {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(path.resolve(__dirname, '../utils/hashPassword.js'), {
+      workerData: { password, saltRounds }
+    });
+
+    worker.on('message', resolve);
+    worker.on('error', reject);
+    worker.on('exit', (code) => {
+      if (code !== 0)
+        reject(new Error(`Worker stopped with exit code ${code}`));
+    });
+  });
+}
+
+function confirmPassword(plainText, password) {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(path.resolve(__dirname, '../utils/comparePassword.js'), {
+      workerData: { plainText, password }
+    });
+
+    worker.on('message', resolve);
+    worker.on('error', reject);
+    worker.on('exit', (code) => {
+      if (code !== 0)
+        reject(new Error(`Worker stopped with exit code ${code}`));
+    });
+  });
+}
+
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  this.password = await bcrypt.hash(
+  this.password = await hashPassword(
     this.password,
     parseInt(process.env.SALT_ROUNDS)
   );
@@ -75,7 +107,7 @@ userSchema.methods.comparePassword = async function (
   plainTextPassword,
   userPassword
 ) {
-  return await bcrypt.compare(plainTextPassword, userPassword);
+  return await confirmPassword(plainTextPassword, userPassword);
 };
 
 const userModel = mongoose.model("User", userSchema);
