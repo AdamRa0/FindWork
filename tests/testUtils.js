@@ -16,6 +16,7 @@ const fs = require("fs");
 const http = require("http");
 const mongoose = require("mongoose");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 
 dotenv.config();
 
@@ -50,7 +51,29 @@ const server = new ApolloServer({
 async function setupAndStartTestServer() {
   await server.start();
 
-  app.use("/server", expressMiddleware(server));
+  app.use(
+    "/server",
+    (req, _, next) => {
+      try {
+        if (!req.cookies.credentials) {
+          return next();
+        }
+
+        const { userRole } = jwt.verify(
+          req.cookies.credentials,
+          process.env.JWT_SECRET_KEY
+        );
+        req.role = userRole;
+      } catch (error) {
+        console.log(error);
+      }
+
+      return next();
+    },
+    expressMiddleware(server, {
+      context: ({ req, res }) => ({ res, credentials: req.role }),
+    })
+  );
 
   await new Promise((resolve) => httpServer.listen({ port: port }, resolve));
 
